@@ -25,5 +25,5 @@ to create or update the index of the ports.
 
 ```bash
 $ cd /opt/local/var/shared/sources/Ports
-$ portindex
+$ sudo portindex
 ```
