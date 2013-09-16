@@ -12,7 +12,7 @@ $ cd /opt/local/var/shared/sources
 $ sudo git clone https://github.com/brianspeir/Ports.git
 ```
 
-Open /opt/etc/macports/sources.conf file in a text editor. Insert a
+Open /opt/local/etc/macports/sources.conf file in a text editor. Insert a
 URL pointing to the reposity location before the rsync URL as shown.
 
 ```
