@@ -1,0 +1,89 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+# Global Keywords
+
+PortSystem              1.0
+PortGroup               python 1.0
+
+name                    ansible
+version                 1.3.1
+categories              sysutils
+maintainers             nomaintainer
+description             Radically simple IT automation
+long_description        Ansible is a radically simple IT orchestration engine that \
+                        makes your applications and systems easier to deploy. Avoid \
+                        writing scripts or custom code to deploy and update your \
+                        applications— automate in a language that approaches plain \
+                        English, using SSH, with no agents to install on remote systems.
+homepage                http://ansibleworks.com/
+platforms               darwin
+supported_archs         noarch
+license                 GPL-3
+
+# Phase Keywords
+
+master_sites            http://www.ansibleworks.com/releases/
+checksums               rmd160  8e21a70fa765aa0b448056bec9eefe2bf5047968 \
+                        sha256  232d52e42988e9604d968ac625634d5dcd6dcb09344011a568725bb7a9617542
+
+# PortGroup
+
+python.versions         26 27
+python.default_version  27
+python.link_binaries_suffix
+
+# Dependencies
+
+depends_lib-append      port:py${python.version}-jinja2 \
+                        port:py${python.version}-yaml \
+                        port:py${python.version}-paramiko
+
+# Variants
+
+default_variants        +accelerated
+
+variant accelerated description {Add accelerated mode.} {
+    depends_run-append      port:py${python.version}-keyczar
+}
+
+# Patches
+
+patch {
+    fs-traverse f ${worksrcpath} {
+        if {[file isfile ${f}]} {
+            reinplace "s|/etc/ansible|${prefix}/etc/ansible|g" ${f}
+            reinplace "s|/usr/share/ansible|${prefix}/share/ansible|g" ${f}
+        }
+    }
+}
+
+post-destroot {
+    # Documentation and examples.
+    xinstall -m 644 -W ${worksrcpath} README.md COPYING  \
+        ${destroot}${prefix}/share/doc/${name}
+
+    xinstall -m 755 -d ${destroot}${prefix}/share/doc/examples
+    xinstall -m 755 ${worksrcpath}/examples/ansible.cfg \
+        ${destroot}${prefix}/share/doc/${name}/examples
+    xinstall -m 755 ${worksrcpath}/examples/hosts \
+        ${destroot}${prefix}/share/doc/${name}/examples
+
+    file copy ${worksrcpath}/examples/playbooks \
+        ${destroot}${prefix}/share/doc/${name}/examples/
+
+    # Man pages.
+    xinstall -d 644 ${destroot}${prefix}/share/man/man1
+    eval xinstall -m 755 [glob ${worksrcpath}/docs/man/man1/*.1] \
+        ${destroot}${prefix}/share/man/man1
+    xinstall -d 644 ${destroot}${prefix}/share/man/man3
+    eval xinstall -m 755 [glob ${worksrcpath}/docs/man/man3/*.3] \
+        ${destroot}${prefix}/share/man/man3
+
+    # Install sample config and hosts file.
+    xinstall -m 755 -d ${destroot}${prefix}/etc/ansible
+    xinstall -m 755 ${worksrcpath}/examples/ansible.cfg \
+        ${destroot}${prefix}/etc/ansible/ansible.cfg
+    xinstall -m 755 ${worksrcpath}/examples/hosts \
+        ${destroot}${prefix}/etc/ansible/hosts
+}
