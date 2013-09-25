@@ -12,6 +12,8 @@ $ cd /opt/local/var/shared/sources
 $ sudo git clone https://github.com/brianspeir/Ports.git
 ```
 
+Link MacPorts to the repository.
+
 Open /opt/local/etc/macports/sources.conf file in a text editor. Insert a
 URL pointing to the reposity location before the rsync URL as shown.
 
@@ -20,12 +22,22 @@ file:///opt/local/var/shared/sources/ports
 rsync://rsync.macports.org/release/ports [default]
 ```
 
-After you create or update the repository, use the MacPorts
+Update the MacPorts index.
+
+After you create or the repository, use the MacPorts
 portindex command to create or update the index of the ports.
 
 ```bash
 $ cd /opt/local/var/shared/sources/Ports
 $ sudo portindex
+```
+
+Apply future updates.
+
+```bash
+$ cd /opt/local/var/shared/sources/Ports
+$ sudo git pull https://github.com/brianspeir/Ports.git
+sudo portindex
 ```
 
 ###Available Ports
